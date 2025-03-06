@@ -1,7 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
-
+require("./models/db");
 const app = express();
 
 //middleware
