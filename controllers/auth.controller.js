@@ -1,17 +1,5 @@
 const UserModel = require("../models/user.model");
-const { sendMail } = require("../utils/EmailService");
 const jwt = require("jsonwebtoken");
-
-const signUpSubject = "Welcome to RealEstate - Your Login Credentials";
-
-const generateUniqueUserId = async () => {
-  while (true) {
-    const userid = `USR${Math.floor(100000 + Math.random() * 900000)}`;
-    if (!(await UserModel.exists({ user_id: userid }))) {
-      return userid;
-    }
-  }
-};
 
 const signup = async (req, res) => {
   try {
@@ -20,11 +8,9 @@ const signup = async (req, res) => {
     if (existingUser) {
       return res
         .status(400)
-        .json({ success: false, message: "Email already in use" });
+        .json({ success: false, message: "Email already in exist" });
     }
-    const userid = await generateUniqueUserId();
     const newUser = new UserModel({
-      user_id: userid,
       email,
       password,
       ...otherDetails,
@@ -32,21 +18,21 @@ const signup = async (req, res) => {
     await newUser.save();
     res.status(201).json({
       success: true,
-      message: "Signup successful.Credentials sent to email.",
-      user: newUser,
+      message: "Registration Successfull!",
     });
-    const signUpDescription = `Dear Member,\n\nYour account has been successfully created!\n\nHere are your login details:\nUsername: ${userid}\nPassword: ${password}\n\nPlease keep this information secure.\n\nBest regards,\nRealEstate Team`;
-    await sendMail(email, signUpSubject, signUpDescription);
   } catch (error) {
     console.error("Signup Error:", error);
-    res.status(500).json({ success: false, message: error });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 
 const signin = async (req, res) => {
   try {
-    const { username, password } = req.body;
-    const user = await UserModel.findOne({ user_id: username });
+    const { identifier , password } = req.body;
+    const user = await UserModel.findOne({
+      $or: [{ username: identifier }, { email: identifier } , {mobileno : identifier}],
+    });
+
     if (!user) {
       return res
         .status(404)
@@ -64,7 +50,7 @@ const signin = async (req, res) => {
     const token = jwt.sign(
       {
         id: user._id,
-        userid: user?.user_id || null,
+        userid: user?.username,
       },
       process.env.JWT_SECRET,
       { expiresIn: "24h" }
