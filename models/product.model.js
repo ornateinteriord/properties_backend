@@ -9,6 +9,7 @@ const ProductSchema = new mongoose.Schema(
     image: { type: String },
     location: { type: String },
     price: { type: String },
+    sqft: { type: String },
     pricePerSqft: { type: String },
     bhk: { type: String },
     bathrooms: { type: String },
