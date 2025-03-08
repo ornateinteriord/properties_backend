@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const Authrouter = require("./routes/auth.routes");
 const Productrouter = require("./routes/product.routes");
+const PropertyTypeRouter = require("./routes/propertyType.routes")
 require("dotenv").config();
 require("./models/db");
 const app = express();
@@ -20,6 +21,7 @@ app.use(
 //router
 app.use("/auth",Authrouter );
 app.use("/product",Productrouter)
+app.use("/property-type", PropertyTypeRouter )
 
 //server
 const PORT = process.env.PORT || 3000;
