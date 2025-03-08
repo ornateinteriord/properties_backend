@@ -34,4 +34,60 @@ const createProperty = async (req, res) => {
   }
 };
 
-module.exports = { createProperty };
+const getAllProperties = async (req, res) => {
+  try {
+    const properties = await ProductModel.find();
+    res.status(200).json({
+      success: true,
+      count: properties.length,
+      properties,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+const updateProperty = async (req, res) => {
+  try {
+    const { id } = req.params; // Get property ID from URL
+    const updatedProperty = await ProductModel.findByIdAndUpdate(id, req.body, {
+      new: true, // Return updated document
+      runValidators: true, // Ensure validation
+    });
+
+    if (!updatedProperty) {
+      return res.status(404).json({ success: false, message: "Property not found" });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Property updated successfully",
+      updatedProperty,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+const deleteProperty = async (req, res) => {
+  try {
+    const { id } = req.params; // Get property ID from URL
+    const deletedProperty = await ProductModel.findByIdAndDelete(id);
+
+    if (!deletedProperty) {
+      return res.status(404).json({ success: false, message: "Property not found" });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Property deleted successfully",
+      deletedProperty,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+
+
+module.exports = { createProperty , getAllProperties , updateProperty , deleteProperty };
