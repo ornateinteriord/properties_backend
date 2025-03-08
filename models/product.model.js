@@ -8,6 +8,7 @@ const ProductSchema = new mongoose.Schema(
     title: { type: String },
     image: { type: String },
     location: { type: String },
+    sqrtft: { type: String },
     price: { type: String },
     pricePerSqft: { type: String },
     bhk: { type: String },
