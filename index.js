@@ -23,6 +23,11 @@ app.use("/auth",Authrouter );
 app.use("/product",Productrouter)
 app.use("/property-type", PropertyTypeRouter )
 
+
+app.get("/",(req,res)=>{
+  res.send("Welcome to properties Server")
+})
+
 //server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
