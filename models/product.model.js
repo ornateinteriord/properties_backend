@@ -17,6 +17,7 @@ const ProductSchema = new mongoose.Schema(
     possession: { type: String },
     furnishing: { type: String },
     parking: { type: String },
+    description: { type: String },
   },
   { timestamps: true, collection: "product_tbl" }
 );
