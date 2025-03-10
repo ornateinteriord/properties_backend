@@ -4,7 +4,8 @@ const ProductSchema = new mongoose.Schema(
   {
     userid: { type: String, required: true },
     property_id: { type: String },
-    property_type: { type: String },
+    property_type: { type: String, },
+    subtype: { type: String, },
     title: { type: String },
     image: { type: String },
     location: { type: String },
