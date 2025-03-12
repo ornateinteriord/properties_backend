@@ -8,6 +8,8 @@ const UserSchema = new mongoose.Schema(
     mobileno: { type: String, required: true },
     password: { type: String, required: true },
     gender: { type: String ,required: true },
+    profileImage: { type: String},
+    role : {type : String , default : "user"},
   },
   { timestamps: true,collection:'user_tbl' }
 );
