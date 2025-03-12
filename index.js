@@ -3,6 +3,8 @@ const cors = require("cors");
 const Authrouter = require("./routes/auth.routes");
 const Productrouter = require("./routes/product.routes");
 const PropertyTypeRouter = require("./routes/propertyType.routes")
+const  userRouter = require('./routes/user.routes')
+
 require("dotenv").config();
 require("./models/db");
 const app = express();
@@ -22,6 +24,7 @@ app.use(
 app.use("/auth",Authrouter );
 app.use("/product",Productrouter)
 app.use("/property-type", PropertyTypeRouter )
+app.use("/user", userRouter )
 
 
 app.get("/",(req,res)=>{
