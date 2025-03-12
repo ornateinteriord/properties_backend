@@ -36,6 +36,11 @@ const createProperty = async (req, res) => {
 
 const getAllProperties = async (req, res) => {
   try {
+    const user = req.params.userid
+    if (user) {
+      const userProperty = await ProductModel.find({userid: user });
+      return res.status(200).json({success:true,userProperty});
+    }
     const properties = await ProductModel.find();
     res.status(200).json({
       success: true,
@@ -90,4 +95,4 @@ const deleteProperty = async (req, res) => {
 
 
 
-module.exports = { createProperty , getAllProperties , updateProperty , deleteProperty };
+module.exports = { createProperty , getAllProperties , updateProperty , deleteProperty};
