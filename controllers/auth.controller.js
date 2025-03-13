@@ -51,6 +51,7 @@ const signin = async (req, res) => {
       {
         id: user._id,
         userid: user?.username,
+        role: user.role,
       },
       process.env.JWT_SECRET,
       { expiresIn: "24h" }
