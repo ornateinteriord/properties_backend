@@ -1,4 +1,5 @@
 const ProductModel = require("../models/product.model");
+const UserModel = require("../models/user.model");
 
 const generateUniquePropertytId = async () => {
   const [lastProperty] = await ProductModel.aggregate([
@@ -93,6 +94,22 @@ const deleteProperty = async (req, res) => {
   }
 };
 
+const getCounts = async (req, res) => {
+  try {
+    const [totalProperties, totalUsers] = await Promise.all([
+      ProductModel.countDocuments(),
+      UserModel.countDocuments(),
+    ]);
+
+    res.status(200).json({
+      success: true,
+      count: { totalProperties, totalUsers },
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
 
 
-module.exports = { createProperty , getAllProperties , updateProperty , deleteProperty};
+
+module.exports = { createProperty , getAllProperties , updateProperty , deleteProperty , getCounts};
