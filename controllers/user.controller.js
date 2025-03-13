@@ -11,4 +11,17 @@ const userGetDetails = async(req,res)=>{
     }
 }
 
-module.exports = userGetDetails
+const getAllusers = async(req,res)=>{
+   try {
+    const users = await UserModel.find().select("-password")
+    res.status(200).json({
+        success: true,
+        count: users.length,
+        users,
+      });
+   } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+   }
+}
+
+module.exports ={ userGetDetails,getAllusers}
