@@ -3,7 +3,9 @@ const cors = require("cors");
 const Authrouter = require("./routes/auth.routes");
 const Productrouter = require("./routes/product.routes");
 const PropertyTypeRouter = require("./routes/propertyType.routes")
-const  userRouter = require('./routes/user.routes')
+const  userRouter = require('./routes/user.routes');
+const { getCounts } = require("./controllers/product.controller");
+const { Authenticated, AuthorizeRoles } = require("./middlewares/auth");
 
 require("dotenv").config();
 require("./models/db");
@@ -25,6 +27,7 @@ app.use("/auth",Authrouter );
 app.use("/product",Productrouter)
 app.use("/property-type", PropertyTypeRouter )
 app.use("/user", userRouter )
+app.get("/get-counts",Authenticated,AuthorizeRoles('admin'), getCounts)
 
 
 app.get("/",(req,res)=>{
