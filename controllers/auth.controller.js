@@ -21,7 +21,6 @@ const signup = async (req, res) => {
       message: "Registration Successfull!",
     });
   } catch (error) {
-    console.error("Signup Error:", error);
     res.status(500).json({ success: false, message: error.message });
   }
 };
@@ -63,7 +62,6 @@ const signin = async (req, res) => {
       message: "login successful.",
     });
   } catch (error) {
-    console.error("Login Error:", error);
     return res.status(500).json({ success: false, message: error });
   }
 };
