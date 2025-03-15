@@ -31,6 +31,10 @@ const userUpdateDetails = async(req,res)=>{
             new: true,
             runValidators: true, 
         });
+
+        if(!updatedUser){
+            return res.status(400).json({success: false, message: "Invalid User"});
+        }
     
         res.status(200).json({success: true, message: "Profile updated successfully", data:updatedUser });
     } catch (error) {
