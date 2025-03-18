@@ -15,25 +15,55 @@ const generateUniquePropertytId = async () => {
 
 const createProperty = async (req, res) => {
   try {
-    const userid = req.user.userid.toString();
-    const propertyId = await generateUniquePropertytId()
+    // Check if all required fields are provided
+    const { 
+      property_type, 
+      title, 
+      address, 
+      district, 
+      taluk, 
+      price, 
+      sqft, 
+      pricePerSqft, 
+      description
+    } = req.body;
+
+    // Check if any required fields are missing
+    if (!property_type || !title || !address || !district || !taluk || !price || !sqft || !pricePerSqft || !description) {
+      return res.status(400).json({
+        success: false,
+        message: "All fields must be filled. Missing required fields."
+      });
+    }
+
+    const userid = req.user.userid.toString(); // Assuming user information is in the request
+    const propertyId = await generateUniquePropertytId(); // Assuming this function exists to generate unique property ID
+
+    // Create new property object with provided data
     const newProperty = new ProductModel({
       ...req.body,
       userid,
-      property_id:propertyId
+      property_id: propertyId
     });
+
+    // Save new property to the database
     await newProperty.save();
-    res
-      .status(201)
-      .json({
-        success: true,
-        message: "Property Created Successfully",
-        newProperty,
-      });
+
+    // Return a success response
+    res.status(201).json({
+      success: true,
+      message: "Property Created Successfully",
+      newProperty,
+    });
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    // Handle errors
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
 };
+
 
 const getAllProperties = async (req, res) => {
   try {
