@@ -7,7 +7,7 @@ const ProductSchema = new mongoose.Schema(
     property_type: { type: String, },
     subtype: { type: String, },
     title: { type: String },
-    image: { type: String , default:"https://res.cloudinary.com/dtntxcl9u/image/upload/v1742296527/trzlwr9la9bwm9dv8w4a.png" },
+    images: { type: [String] , default:["https://res.cloudinary.com/dtntxcl9u/image/upload/v1742296527/trzlwr9la9bwm9dv8w4a.png"] },
     address: { type: String },
     state: { type: String , default : 'karnataka'},
     district: { type: String },
