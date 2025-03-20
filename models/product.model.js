@@ -14,6 +14,7 @@ const ProductSchema = new mongoose.Schema(
     taluk: { type: String },
     price: { type: String },
     sqft: { type: String },
+    acres: { type: String },
     status : {type : String , default : "pending"},
     pramote : {type : String , default : "pending"},
     pricePerSqft: { type: String },
