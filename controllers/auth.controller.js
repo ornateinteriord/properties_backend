@@ -1,5 +1,7 @@
 const UserModel = require("../models/user.model");
 const jwt = require("jsonwebtoken");
+const { verifyOTP, generateOTP, storeOTP } = require("../utils/OtpService");
+const { sendMail } = require("../utils/EmailService");
 
 const signup = async (req, res) => {
   try {
@@ -66,7 +68,45 @@ const signin = async (req, res) => {
   }
 };
 
+const forgotPassword = async(req,res)=>{
+  try {
+    const { email, password, otp } = req.body;
+    const user = await UserModel.findOne({ email });
+    if (!user) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Email not registered" });
+    }
+    if (otp && !password) {
+      if (!verifyOTP(email, otp)) {
+        return res
+          .status(400)
+          .json({ success: false, message: "Invalid OTP or expired" });
+      }
+      return res.json({ success: true, message: "OTP verified. Now set a new password." });
+    }
+    if (password) {
+      user.password = password;
+      await user.save();
+      return res.json({
+        success: true,
+        message: "Password reset successfully",
+      });
+    }
+    const newOtp = generateOTP();
+    const resetPasswordDescription = `Dear User,\n\nYour OTP for password reset is: ${newOtp}\n\nPlease use this OTP to proceed with resetting your password.\n\nPlease keep don't share with anyone.\n\nBest regards,\nSK Properties Team`;
+    const resetPasswordSubject =  "SK Properties - OTP Verification";
+    storeOTP(email, newOtp);
+    await sendMail(email, resetPasswordSubject , resetPasswordDescription);
+    return res.json({ success: true, message: "OTP sent to your email" });
+  } catch (error) {
+    return res
+    .status(500)
+    .json({ success: false, message: error });
+  }
+}
+
 
 module.exports = {
-    signup, signin
+    signup, signin,forgotPassword
 }
