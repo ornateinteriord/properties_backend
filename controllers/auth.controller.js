@@ -86,6 +86,12 @@ const forgotPassword = async(req,res)=>{
       return res.json({ success: true, message: "OTP verified. Now set a new password." });
     }
     if (password) {
+      const isPasswordSame = await UserModel.findOne({password});
+      if (isPasswordSame) {
+        return res
+          .status(400)
+          .json({ success: false, message: "New password must be different from the previous password" });
+      }
       user.password = password;
       await user.save();
       return res.json({
