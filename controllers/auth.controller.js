@@ -22,6 +22,9 @@ const signup = async (req, res) => {
       success: true,
       message: "Registration Successfull!",
     });
+    const subject = "Wellcome to SK Properties!";
+    const description = `Hello ${otherDetails.fullname},\n\nThank you for signing up with SK Properties!\nWe’re excited to have you join our community.\n\n  Welcome aboard! \n\nBest regards,\nSK Properties Team`;
+    await sendMail(email, subject, description);
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
@@ -29,9 +32,13 @@ const signup = async (req, res) => {
 
 const signin = async (req, res) => {
   try {
-    const { identifier , password } = req.body;
+    const { identifier, password } = req.body;
     const user = await UserModel.findOne({
-      $or: [{ username: identifier }, { email: identifier } , {mobileno : identifier}],
+      $or: [
+        { username: identifier },
+        { email: identifier },
+        { mobileno: identifier },
+      ],
     });
 
     if (!user) {
@@ -68,7 +75,7 @@ const signin = async (req, res) => {
   }
 };
 
-const forgotPassword = async(req,res)=>{
+const forgotPassword = async (req, res) => {
   try {
     const { email, password, otp } = req.body;
     const user = await UserModel.findOne({ email });
@@ -83,12 +90,18 @@ const forgotPassword = async(req,res)=>{
           .status(400)
           .json({ success: false, message: "Invalid OTP or expired" });
       }
-      return res.json({ success: true, message: "OTP verified. Now set a new password." });
+      return res.json({
+        success: true,
+        message: "OTP verified. Now set a new password.",
+      });
     }
     if (password === user.password) {
       return res
         .status(400)
-        .json({ success: false, message: "New password must be different from the previous password" });
+        .json({
+          success: false,
+          message: "New password must be different from the previous password",
+        });
     }
     if (password) {
       user.password = password;
@@ -99,19 +112,19 @@ const forgotPassword = async(req,res)=>{
       });
     }
     const newOtp = generateOTP();
-    const resetPasswordDescription = `Dear User,\n\nYour OTP for password reset is: ${newOtp}\n\nPlease use this OTP to proceed with resetting your password.\n\nPlease keep don't share with anyone.\n\nBest regards,\nSK Properties Team`;
-    const resetPasswordSubject =  "SK Properties - OTP Verification";
+    const name = user.fullname;
+    const resetPasswordDescription = `Dear ${name},\n\nYour OTP for password reset is: ${newOtp}\n\nPlease use this OTP to proceed with resetting your password.\n\nPlease keep don't share with anyone.\n\nBest regards,\nSK Properties Team`;
+    const resetPasswordSubject = "SK Properties - OTP Verification";
     storeOTP(email, newOtp);
-    await sendMail(email, resetPasswordSubject , resetPasswordDescription);
+    await sendMail(email, resetPasswordSubject, resetPasswordDescription);
     return res.json({ success: true, message: "OTP sent to your email" });
   } catch (error) {
-    return res
-    .status(500)
-    .json({ success: false, message: error });
+    return res.status(500).json({ success: false, message: error });
   }
-}
-
+};
 
 module.exports = {
-    signup, signin,forgotPassword
-}
+  signup,
+  signin,
+  forgotPassword,
+};
