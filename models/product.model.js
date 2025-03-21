@@ -25,9 +25,14 @@ const ProductSchema = new mongoose.Schema(
     furnishing: { type: String },
     parking: { type: String },
     description: { type: String },
+    location: {
+      type: { type: String, default: 'Point' },
+      coordinates: { type: [Number], required: true }, // [longitude, latitude]
+  },
   },
   { timestamps: true, collection: "product_tbl" }
 );
 
+ProductSchema.index({ location: '2dsphere' });
 const ProductModel = mongoose.model("product_tbl", ProductSchema);
 module.exports = ProductModel;

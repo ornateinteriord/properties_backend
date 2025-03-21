@@ -110,6 +110,24 @@ const getCounts = async (req, res) => {
   }
 };
 
+const searchProperties = async (req, res) => {
+  const { lat, lng, radius } = req.query;
+
+  if (!lat || !lng || !radius) {
+      return res.status(400).json({ message: 'Missing parameters' });
+  }
+
+  const properties = await ProductModel.find({
+      location: {
+          $geoWithin: {
+              $centerSphere: [[parseFloat(lng), parseFloat(lat)], parseFloat(radius) / 6378.1], // Convert km to radians
+          },
+      },
+  });
+
+  res.json(properties);
+}
 
 
-module.exports = { createProperty , getAllProperties , updateProperty , deleteProperty , getCounts};
+
+module.exports = { createProperty , getAllProperties , updateProperty , deleteProperty , getCounts , searchProperties};
