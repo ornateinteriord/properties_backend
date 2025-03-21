@@ -85,6 +85,11 @@ const forgotPassword = async(req,res)=>{
       }
       return res.json({ success: true, message: "OTP verified. Now set a new password." });
     }
+    if (password === user.password) {
+      return res
+        .status(400)
+        .json({ success: false, message: "New password must be different from the previous password" });
+    }
     if (password) {
       user.password = password;
       await user.save();
