@@ -1,5 +1,6 @@
 const ProductModel = require("../models/product.model");
 const UserModel = require("../models/user.model");
+const { sendMail } = require("../utils/EmailService");
 
 const generateUniquePropertytId = async () => {
   const [lastProperty] = await ProductModel.aggregate([
@@ -17,6 +18,7 @@ const createProperty = async (req, res) => {
   try {
     const userid = req.user.userid.toString();
     const propertyId = await generateUniquePropertytId()
+    
     const newProperty = new ProductModel({
       ...req.body,
       userid,
@@ -30,6 +32,13 @@ const createProperty = async (req, res) => {
         message: "Property Created Successfully",
         newProperty,
       });
+      const user = await UserModel.findOne({username:userid});
+      if(user){
+        const { email, fullname: name } = user;
+        const subject = "Property Submission Received"
+        const description =`Dear ${name},\n\nThank you for submitting your property on our platform.\n We have successfully received the details of your property.\n Our team will now verify the submitted information. After verification, we will get back to you with further updates.\n\nBest regards,\nSK Properties Team `
+        await sendMail(email, subject, description);
+      }
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
