@@ -109,25 +109,27 @@ const getCounts = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
-
 const searchProperties = async (req, res) => {
   const { lat, lng, radius } = req.query;
 
   if (!lat || !lng || !radius) {
-      return res.status(400).json({ message: 'Missing parameters' });
+    return res.status(400).json({ message: 'Missing parameters' });
   }
 
-  const properties = await ProductModel.find({
+  try {
+    const properties = await ProductModel.find({
       location: {
-          $geoWithin: {
-              $centerSphere: [[parseFloat(lng), parseFloat(lat)], parseFloat(radius) / 6378.1], // Convert km to radians
-          },
+        $geoWithin: {
+          $centerSphere: [[parseFloat(lng), parseFloat(lat)], parseFloat(radius) / 6378.1], // Convert km to radians
+        },
       },
-  });
+    }) // Only return the `title` and `location` fields
 
-  res.json(properties);
-}
-
-
+    res.json(properties);
+  } catch (error) {
+    console.error('Error fetching properties:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
 
 module.exports = { createProperty , getAllProperties , updateProperty , deleteProperty , getCounts , searchProperties};
