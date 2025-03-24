@@ -65,7 +65,13 @@ const getAllProperties = async (req, res) => {
 const getPropertyDetails =async(req,res)=>{
    try {
     const { propertyid } = req.params;
+    if(!propertyid){
+      return res.status(404).json({ success: false, message: "Property Id is required" });
+    }
     const property = await ProductModel.findOne({ property_id:propertyid})
+    if(!property){
+      return res.status(404).json({ success: false, message: "Property not found" });
+    }
     return res.status(200).json({success:true,property});
    } catch (error) {
     res.status(500).json({ success: false, message: error.message });
