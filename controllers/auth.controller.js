@@ -62,7 +62,7 @@ const signin = async (req, res) => {
         role: user.role,
       },
       process.env.JWT_SECRET,
-      { expiresIn: "24h" }
+      { expiresIn: "5h" }
     );
     return res.status(200).json({
       success: true,
