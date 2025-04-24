@@ -26,8 +26,8 @@ const ProductSchema = new mongoose.Schema(
     parking: { type: String },
     description: { type: String },
     location: {
-      type: { type: String, default: 'Point' },
-      coordinates: { type: [Number], required: true }, // [longitude, latitude]
+      type: { type: String },
+      coordinates: { type: [Number]}, // [longitude, latitude]
   },
   },
   { timestamps: true, collection: "product_tbl" }
