@@ -157,4 +157,39 @@ const searchProperties = async (req, res) => {
   }
 };
 
-module.exports = { createProperty , getAllProperties , updateProperty , deleteProperty , getCounts , searchProperties,getPropertyDetails};
+const DeleteImage = async (req, res) => {
+  try {
+    const { productId } = req.params;
+    const { imageUrl } = req.query;
+      if(!productId) {
+        return res.status(400).json({ message: 'Product ID is required' });
+      }
+    
+      if (!imageUrl) {
+        return res.status(400).json({ message: 'Image URL is required' });
+      }
+
+      const decodedImageUrl = decodeURIComponent(imageUrl);
+  
+      // Find the product and update it by pulling the image from the array
+      const updatedProduct = await ProductModel.findByIdAndUpdate(
+        productId,  // Search condition
+        { $pull: { images: decodedImageUrl } },
+        { new: true }
+      );
+  
+      if (!updatedProduct) {
+        return res.status(404).json({ message: 'Product not found' });
+      }
+  
+      res.status(200).json({
+        message: 'Image deleted successfully',
+        product: updatedProduct
+      });
+    } catch (error) {
+      console.error('Error deleting image:', error);
+      res.status(500).json({ message: 'Server error', error: error.message });
+    }
+}
+
+module.exports = { createProperty , getAllProperties , updateProperty , deleteProperty , getCounts , searchProperties,getPropertyDetails, DeleteImage};
