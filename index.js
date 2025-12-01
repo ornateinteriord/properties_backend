@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+const ImageKit = require("imagekit");
 const Authrouter = require("./routes/auth.routes");
 const Productrouter = require("./routes/product.routes");
 const PropertyTypeRouter = require("./routes/propertyType.routes")
@@ -21,6 +22,33 @@ app.use(
     credentials: true,
   })
 );
+
+// Initialize ImageKit
+let imagekit = null;
+if (
+  process.env.IMAGEKIT_PUBLIC_KEY &&
+  process.env.IMAGEKIT_PRIVATE_KEY &&
+  process.env.IMAGEKIT_URL_ENDPOINT
+) {
+  imagekit = new ImageKit({
+    publicKey: process.env.IMAGEKIT_PUBLIC_KEY,
+    privateKey: process.env.IMAGEKIT_PRIVATE_KEY,
+    urlEndpoint: process.env.IMAGEKIT_URL_ENDPOINT,
+  });
+  console.log("ImageKit initialized successfully");
+} else {
+  console.warn("ImageKit not initialized - missing environment variables");
+}
+
+// ImageKit authentication endpoint
+app.get("/image-kit-auth", (_req, res) => {
+  if (imagekit) {
+    const result = imagekit.getAuthenticationParameters();
+    res.send(result);
+  } else {
+    res.status(500).json({ error: "ImageKit not configured" });
+  }
+});
 
 //router
 app.use("/auth",Authrouter );
